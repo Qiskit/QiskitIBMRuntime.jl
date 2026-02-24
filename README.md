@@ -7,9 +7,7 @@
 
 # QiskitIBMRuntimeC.jl
 
-This package allows you to execute circuits on a quantum computer from the [Julia programming language](https://julialang.org/) using the Qiskit IBM Runtime service.  It builds on [Qiskit.jl](https://github.com/Qiskit/Qiskit.jl) and provides a lightweight Julia wrapper of the [qiskit-ibm-runtime-c](https://github.com/Qiskit/qiskit-ibm-runtime-c) client.  It allows you to submit circuits to hardware via the [Qiskit C API](https://quantum.cloud.ibm.com/docs/en/api/qiskit-c) without performing a manual build step.
-
-Supported operating systems: macOS and Linux.
+This package allows you to execute circuits on a quantum computer from the [Julia programming language](https://julialang.org/) using the Qiskit IBM Runtime service.  It builds on [Qiskit.jl](https://github.com/Qiskit/Qiskit.jl) and provides a lightweight Julia wrapper of the [qiskit-ibm-runtime-c](https://github.com/Qiskit/qiskit-ibm-runtime-c) client.
 
 ## Example
 
