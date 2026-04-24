@@ -28,7 +28,6 @@ jobs:
           - 'pre'
         os:
           - ubuntu-latest
-          - macOS-latest
         arch:
           - x64
         include:
@@ -37,6 +36,9 @@ jobs:
             version: '1.10'
           - os: macos-15-intel
             arch: x64
+            version: '1.10'
+          - os: macos-latest
+            arch: aarch64
             version: '1.10'
     steps:
       - uses: actions/checkout@v6
@@ -49,6 +51,7 @@ jobs:
       - uses: julia-actions/julia-runtest@v1
       - uses: julia-actions/julia-processcoverage@v1
       - uses: coverallsapp/github-action@v2
+        if: runner.os == 'Linux'
         with:
           files: lcov.info
   docs:
