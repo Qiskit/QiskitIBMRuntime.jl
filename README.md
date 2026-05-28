@@ -1,5 +1,6 @@
 [![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://qiskit.github.io/QiskitIBMRuntimeC.jl/stable/)
 [![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://qiskit.github.io/QiskitIBMRuntimeC.jl/dev/)
+[![Qiskit Ecosystem](https://qisk.it/e-bcde78a1)](https://qisk.it/ecosystem)
 [![Build Status](https://github.com/Qiskit/QiskitIBMRuntimeC.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/Qiskit/QiskitIBMRuntimeC.jl/actions/workflows/CI.yml?query=branch%3Amain)
 [![Coverage](https://coveralls.io/repos/github/Qiskit/QiskitIBMRuntimeC.jl/badge.svg?branch=main)](https://coveralls.io/github/Qiskit/QiskitIBMRuntimeC.jl?branch=main)
 [![PkgEval](https://JuliaCI.github.io/NanosoldierReports/pkgeval_badges/Q/Qiskit.svg)](https://JuliaCI.github.io/NanosoldierReports/pkgeval_badges/Q/Qiskit.html)
