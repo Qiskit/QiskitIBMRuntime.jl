@@ -4,7 +4,7 @@ CurrentModule = QiskitIBMRuntime
 
 # QiskitIBMRuntime
 
-Documentation for [QiskitIBMRuntime.jl](https://github.com/garrison/QiskitIBMRuntime.jl).
+Documentation for [QiskitIBMRuntime.jl](https://github.com/Qiskit/QiskitIBMRuntime.jl).
 
 In order to use this package, the credentials currently must first be saved to `$HOME/.qiskit/qiskit-ibm.json` following [the procedure in the qiskit-ibm-runtime README](https://github.com/Qiskit/qiskit-ibm-runtime?tab=readme-ov-file#qiskit-runtime-service-on-the-new-ibm-quantum-platform-ibm-cloud).
 
