@@ -10,7 +10,7 @@
 # copyright notice, and modified files need to carry a notice indicating
 # that they have been altered from the originals.
 
-module QiskitIBMRuntimeC
+module QiskitIBMRuntime
 
 libdir = joinpath(@__DIR__, "..", "lib")
 include(joinpath(libdir, "LibQiskitIBMRuntime.jl"))
@@ -328,4 +328,4 @@ for e in (JobStatus,)
     end
 end
 
-end # module QiskitIBMRuntimeC
+end # module QiskitIBMRuntime

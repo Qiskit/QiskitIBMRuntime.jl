@@ -1,14 +1,14 @@
-using QiskitIBMRuntimeC
+using QiskitIBMRuntime
 using Documenter
 
-DocMeta.setdocmeta!(QiskitIBMRuntimeC, :DocTestSetup, :(using QiskitIBMRuntimeC); recursive=true)
+DocMeta.setdocmeta!(QiskitIBMRuntime, :DocTestSetup, :(using QiskitIBMRuntime); recursive=true)
 
 makedocs(;
-    modules=[QiskitIBMRuntimeC],
+    modules=[QiskitIBMRuntime],
     authors="IBM and its contributors",
-    sitename="QiskitIBMRuntimeC.jl",
+    sitename="QiskitIBMRuntime.jl",
     format=Documenter.HTML(;
-        canonical="https://qiskit.github.io/QiskitIBMRuntimeC.jl",
+        canonical="https://qiskit.github.io/QiskitIBMRuntime.jl",
         edit_link="main",
         assets=String[],
     ),
@@ -18,6 +18,6 @@ makedocs(;
 )
 
 deploydocs(;
-    repo="github.com/Qiskit/QiskitIBMRuntimeC.jl",
+    repo="github.com/Qiskit/QiskitIBMRuntime.jl",
     devbranch="main",
 )

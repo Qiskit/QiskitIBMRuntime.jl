@@ -1,4 +1,4 @@
-name = "QiskitIBMRuntimeC"
+name = "QiskitIBMRuntime"
 uuid = "90b98b31-c194-4d1e-bfb5-0d4cb7418088"
 authors = ["IBM and its contributors"]
 version = "0.1.1"
