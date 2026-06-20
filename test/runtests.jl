@@ -1,4 +1,4 @@
-using QiskitIBMRuntimeC
+using QiskitIBMRuntime
 using Qiskit
 using Test
 using Aqua
@@ -12,9 +12,9 @@ function generate_bell_circuit()
     qc
 end
 
-@testset "QiskitIBMRuntimeC.jl" begin
+@testset "QiskitIBMRuntime.jl" begin
     @testset "Code quality (Aqua.jl)" begin
-        Aqua.test_all(QiskitIBMRuntimeC)
+        Aqua.test_all(QiskitIBMRuntime)
     end
 
     # Skip the tests that require a service by default

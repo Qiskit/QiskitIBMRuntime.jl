@@ -1,14 +1,17 @@
-[![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://qiskit.github.io/QiskitIBMRuntimeC.jl/stable/)
-[![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://qiskit.github.io/QiskitIBMRuntimeC.jl/dev/)
+[![Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://qiskit.github.io/QiskitIBMRuntime.jl/stable/)
+[![Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://qiskit.github.io/QiskitIBMRuntime.jl/dev/)
 [![Qiskit Ecosystem](https://qisk.it/e-bcde78a1)](https://qisk.it/ecosystem)
-[![Build Status](https://github.com/Qiskit/QiskitIBMRuntimeC.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/Qiskit/QiskitIBMRuntimeC.jl/actions/workflows/CI.yml?query=branch%3Amain)
-[![Coverage](https://coveralls.io/repos/github/Qiskit/QiskitIBMRuntimeC.jl/badge.svg?branch=main)](https://coveralls.io/github/Qiskit/QiskitIBMRuntimeC.jl?branch=main)
+[![Build Status](https://github.com/Qiskit/QiskitIBMRuntime.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/Qiskit/QiskitIBMRuntime.jl/actions/workflows/CI.yml?query=branch%3Amain)
+[![Coverage](https://coveralls.io/repos/github/Qiskit/QiskitIBMRuntime.jl/badge.svg?branch=main)](https://coveralls.io/github/Qiskit/QiskitIBMRuntime.jl?branch=main)
 [![PkgEval](https://JuliaCI.github.io/NanosoldierReports/pkgeval_badges/Q/Qiskit.svg)](https://JuliaCI.github.io/NanosoldierReports/pkgeval_badges/Q/Qiskit.html)
 [![Aqua](https://raw.githubusercontent.com/JuliaTesting/Aqua.jl/master/badge.svg)](https://github.com/JuliaTesting/Aqua.jl)
 
-# QiskitIBMRuntimeC.jl
+# QiskitIBMRuntime.jl
 
 This package allows you to execute circuits on a quantum computer from the [Julia programming language](https://julialang.org/) using the Qiskit IBM Runtime service.  It builds on [Qiskit.jl](https://github.com/Qiskit/Qiskit.jl) and provides a lightweight Julia wrapper of the [qiskit-ibm-runtime-c](https://github.com/Qiskit/qiskit-ibm-runtime-c) client.
+
+> [!NOTE]
+> This package was formerly known as QiskitIBMRuntimeC.jl.
 
 ## Example
 
@@ -16,7 +19,7 @@ The following example constructs a circuit that generates a [Bell state](https:/
 
 ```julia
 using Qiskit
-using QiskitIBMRuntimeC
+using QiskitIBMRuntime
 
 function generate_bell_circuit()
     qc = QuantumCircuit(2, 2) # 2 qubits, 2 clbits
@@ -65,37 +68,37 @@ cargo install juliaup
 juliaup add release
 ```
 
-### Install `QiskitIBMRuntimeC.jl`
+### Install `QiskitIBMRuntime.jl`
 
 #### Latest stable release
 
-Type `] add QiskitIBMRuntimeC` in the Julia REPL, or run the following command:
+Type `] add QiskitIBMRuntime` in the Julia REPL, or run the following command:
 
 ```sh
-julia -e 'using Pkg; pkg"add QiskitIBMRuntimeC"'
+julia -e 'using Pkg; pkg"add QiskitIBMRuntime"'
 ```
 
 #### Development version
 
-Type `] dev QiskitIBMRuntimeC` in the Julia REPL, or run the following command:
+Type `] dev QiskitIBMRuntime` in the Julia REPL, or run the following command:
 
 ```sh
-julia -e 'using Pkg; pkg"dev QiskitIBMRuntimeC"'
+julia -e 'using Pkg; pkg"dev QiskitIBMRuntime"'
 ```
 
-Afterward, the repository will be cloned to `~/.julia/dev/QiskitIBMRuntimeC`.
+Afterward, the repository will be cloned to `~/.julia/dev/QiskitIBMRuntime`.
 
 ## Run tests
 
-Type `] test QiskitIBMRuntimeC` in the Julia REPL, or run the following command:
+Type `] test QiskitIBMRuntime` in the Julia REPL, or run the following command:
 
 ```sh
-julia -e 'using Pkg; Pkg.test("QiskitIBMRuntimeC")'
+julia -e 'using Pkg; Pkg.test("QiskitIBMRuntime")'
 ```
 
 ## Documentation
 
-Documentation is available at https://qiskit.github.io/QiskitIBMRuntimeC.jl.
+Documentation is available at https://qiskit.github.io/QiskitIBMRuntime.jl.
 
 ## License
 

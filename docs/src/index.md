@@ -1,10 +1,10 @@
 ```@meta
-CurrentModule = QiskitIBMRuntimeC
+CurrentModule = QiskitIBMRuntime
 ```
 
-# QiskitIBMRuntimeC
+# QiskitIBMRuntime
 
-Documentation for [QiskitIBMRuntimeC.jl](https://github.com/garrison/QiskitIBMRuntimeC.jl).
+Documentation for [QiskitIBMRuntime.jl](https://github.com/Qiskit/QiskitIBMRuntime.jl).
 
 In order to use this package, the credentials currently must first be saved to `$HOME/.qiskit/qiskit-ibm.json` following [the procedure in the qiskit-ibm-runtime README](https://github.com/Qiskit/qiskit-ibm-runtime?tab=readme-ov-file#qiskit-runtime-service-on-the-new-ibm-quantum-platform-ibm-cloud).
 
@@ -14,7 +14,7 @@ This example constructs a circuit that generates a [Bell state](https://en.wikip
 
 ```julia
 using Qiskit
-using QiskitIBMRuntimeC
+using QiskitIBMRuntime
 
 function generate_bell_circuit()
     qc = QuantumCircuit(2, 2) # 2 qubits, 2 clbits
@@ -56,5 +56,5 @@ samples = ["0x0", "0x0", "0x0", "0x3", "0x0", "0x3", "0x0", "0x3", "0x0", "0x0",
 ```
 
 ```@autodocs
-Modules = [QiskitIBMRuntimeC]
+Modules = [QiskitIBMRuntime]
 ```
