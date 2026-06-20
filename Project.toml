@@ -1,7 +1,7 @@
 name = "QiskitIBMRuntime"
 uuid = "1f74880b-c9c8-4af4-a333-b5b4aaaec6f5"
 authors = ["IBM and its contributors"]
-version = "0.1.1"
+version = "0.2.0"
 
 [deps]
 CEnum = "fa961155-64e5-5f13-b03f-caf6b980ea82"
