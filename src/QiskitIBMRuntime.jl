@@ -224,14 +224,26 @@ function run_sampler_job(service::Service, backend::Backend, circuit::QuantumCir
 end
 
 """
-    Samples <: AbstractVector{String}
+    Samples <: AbstractVector{BitVector}
 
 Data type which stores samples returned from the quantum computer.
+
+Each element is a single shot, returned as a `BitVector` of length
+[`num_bits`](@ref).  The bits are ordered so that `samples[i][j]` corresponds
+to classical bit `j - 1` of shot `i`; that is, index `1` is the least
+significant bit, matching the zero-based classical bit indexing used by Qiskit.
+
+Indexing a single shot requires fetching and parsing one string from the
+underlying C library, so accessing every bit of every shot one element at a
+time is comparatively slow.  To obtain all of the data at once, convert to a
+dense array with `BitMatrix(samples)`, which returns a `num_bits × num_samples`
+matrix whose `k`-th column is shot `k`.
 """
-mutable struct Samples <: AbstractVector{String}
+mutable struct Samples <: AbstractVector{BitVector}
     ptr::Ptr{QkrtSamples}
+    num_bits::Int
     function Samples(ptr::Ptr{QkrtSamples})
-        retval = new(ptr)
+        retval = new(ptr, Int(qkrt_samples_num_bits(ptr)))
         finalizer(qkrt_samples_free, retval)
         retval
     end
@@ -240,30 +252,43 @@ end
 LibQiskitIBMRuntime.qkrt_samples_free(samples::Samples) =
     qkrt_samples_free(samples.ptr)
 
+"""
+    num_bits(samples::Samples)
+
+Return the number of classical bits in each shot of `samples`.
+"""
+num_bits(samples::Samples) = samples.num_bits
+
+# Parse a hex sample string (e.g. "0x6") into a `BitVector` of length `nbits`,
+# where element `j` holds classical bit `j - 1` (index 1 is the least
+# significant bit).  Parsing goes through `BigInt` so that circuits with more
+# than 64 classical bits are handled correctly.
+function _hex_to_bitvector(str::AbstractString, nbits::Integer)
+    value = parse(BigInt, str)
+    bv = BitVector(undef, nbits)
+    @inbounds for j in 1:nbits
+        bv[j] = isodd(value >> (j - 1))
+    end
+    bv
+end
+
 Base.IndexStyle(::Type{Samples}) = IndexLinear()
 Base.size(samples::Samples) = (Int(qkrt_samples_num_samples(samples.ptr)),)
 
-function Base.getindex(samples::Samples, i::Integer)
+function Base.getindex(samples::Samples, i::Integer)::BitVector
     @boundscheck checkbounds(samples, i)
-    cstr = qkrt_samples_get_sample(samples.ptr, i - 1)
-    from_cstring_and_free(cstr)
+    cstr = GC.@preserve samples qkrt_samples_get_sample(samples.ptr, i - 1)
+    _hex_to_bitvector(from_cstring_and_free(cstr), samples.num_bits)
 end
 
-function Base.iterate(samples::Samples)
-    if isempty(samples)
-        return nothing
-    else
-        i = firstindex(samples)
-        return (samples[i], i + 1)
+function Base.BitMatrix(samples::Samples)
+    nbits = samples.num_bits
+    nshots = length(samples)
+    result = BitMatrix(undef, nbits, nshots)
+    @inbounds for k in 1:nshots
+        result[:, k] = samples[k]
     end
-end
-
-function Base.iterate(samples::Samples, state)
-    if state > length(samples)
-        return nothing
-    else
-        return (samples[state], state + 1)
-    end
+    result
 end
 
 """
@@ -318,7 +343,7 @@ function get_job_results(job::Job, service::Service; poll_interval::Union{Real,D
 end
 
 export Service, Backend, BackendSearchResults, JobStatus
-@compat public Job, Samples
+@compat public Job, Samples, num_bits
 export least_busy, backend_search, run_sampler_job, get_job_status, get_job_results, target_from_backend
 
 # Export (or at least make public) enum instances

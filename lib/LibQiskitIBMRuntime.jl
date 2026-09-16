@@ -92,6 +92,10 @@ function qkrt_samples_num_samples(samples)
     ccall((:qkrt_samples_num_samples, libqiskit_ibm_runtime), Csize_t, (Ptr{Samples},), samples)
 end
 
+function qkrt_samples_num_bits(samples)
+    ccall((:qkrt_samples_num_bits, libqiskit_ibm_runtime), UInt32, (Ptr{Samples},), samples)
+end
+
 function qkrt_samples_get_sample(samples, index)
     ccall((:qkrt_samples_get_sample, libqiskit_ibm_runtime), Ptr{Cchar}, (Ptr{Samples}, Csize_t), samples, index)
 end
