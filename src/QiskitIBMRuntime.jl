@@ -151,7 +151,7 @@ function Base.iterate(sresults::BackendSearchResults, state)
 end
 
 function Base.propertynames(backend::Backend; private::Bool = false)
-    union(fieldnames(typeof(obj)), (:name, :instance_crn, :instance_name))
+    union(fieldnames(typeof(backend)), (:name, :instance_crn, :instance_name))
 end
 
 function from_cstring_and_free(str::Ptr{Cchar})
@@ -164,7 +164,7 @@ function Base.getproperty(backend::Backend, sym::Symbol)
     if sym === :name
         return GC.@preserve backend unsafe_string(qkrt_backend_name(backend.ptr))
     elseif sym === :instance_crn
-        return unsafe_string(qkrt_backend_crn_name(backend.ptr))
+        return unsafe_string(qkrt_backend_instance_crn(backend.ptr))
     elseif sym === :instance_name
         return unsafe_string(qkrt_backend_instance_name(backend.ptr))
     else
