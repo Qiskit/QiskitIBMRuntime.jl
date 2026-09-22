@@ -303,18 +303,14 @@ function get_job_status(job::Job, service::Service)::JobStatus
 end
 
 """
-    get_job_results(job, service; poll_interval=1)
+    get_sampler_job_results(job, service; poll_interval=1)
 
 Return job results as a `Samples` object.  The `poll_interval` argument can be
 any type accepted by `sleep()`.  By default, it will poll every second while in
 the `Queued` or `Running` state.  To disable polling entirely and error if the
 job is not `Completed`, pass `poll_interval=nothing`.
 """
-function get_job_results(
-    job::Job,
-    service::Service;
-    poll_interval::Union{Real,Dates.Period,Nothing}=Dates.Second(1),
-)
+function get_sampler_job_results(job::Job, service::Service; poll_interval::Union{Real,Dates.Period,Nothing}=Dates.Second(1))
     # First make sure (or wait until) the job is actually complete
     status = get_job_status(job, service)
     if poll_interval !== nothing
@@ -328,14 +324,13 @@ function get_job_results(
     end
     # Now obtain the results
     samples = Ref{Ptr{QkrtSamples}}(0)
-    check_exit_code(qkrt_job_results(samples, service.ptr, job.ptr))
+    check_exit_code(qkrt_sampler_job_results(samples, service.ptr, job.ptr))
     Samples(samples[])
 end
 
 export Service, Backend, BackendSearchResults, JobStatus
 @compat public Job, Samples
-export least_busy,
-    backend_search, run_sampler_job, get_job_status, get_job_results, target_from_backend
+export least_busy, backend_search, run_sampler_job, get_job_status, get_sampler_job_results, target_from_backend
 
 # Export (or at least make public) enum instances
 for e in (JobStatus,)
