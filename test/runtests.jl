@@ -27,11 +27,19 @@ end
         @test parse_hex("0x6", 4) == BitVector([0, 1, 1, 0])
         # A value narrower than the bit width is zero-padded.
         @test parse_hex("0x2", 5) == BitVector([0, 1, 0, 0, 0])
-        # More than 64 bits are handled correctly (parsing goes through BigInt).
+        # Widths of 64 bits and below take the UInt64 path; the boundary and
+        # the all-ones value are the interesting cases there.
+        @test parse_hex("0x" * "f"^16, 64) == trues(64)
+        @test count(parse_hex("0x8000000000000000", 64)) == 1
+        @test parse_hex("0x8000000000000000", 64)[64]
+        # Above 64 bits, parsing goes through BigInt.
         wide = string("0x", string(big(1) << 100, base = 16))
         bv = parse_hex(wide, 128)
         @test count(bv) == 1
         @test bv[101]
+        @test parse_hex("0x" * "f"^16, 65) == vcat(trues(64), falses(1))
+        # The two paths agree where their ranges overlap.
+        @test parse_hex("0x6", 64) == parse_hex("0x6", 65)[1:64]
     end
 
     # Skip the tests that require a service by default

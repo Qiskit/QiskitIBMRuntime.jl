@@ -233,11 +233,13 @@ Each element is a single shot, returned as a `BitVector` of length
 to classical bit `j - 1` of shot `i`; that is, index `1` is the least
 significant bit, matching the zero-based classical bit indexing used by Qiskit.
 
-Indexing a single shot requires fetching and parsing one string from the
-underlying C library, so accessing every bit of every shot one element at a
-time is comparatively slow.  To obtain all of the data at once, convert to a
-dense array with `BitMatrix(samples)`, which returns a `num_bits × num_samples`
-matrix whose `k`-th column is shot `k`.
+Shots are fetched lazily and are not cached: each `samples[i]` fetches and
+parses one string from the underlying C library and allocates a new
+`BitVector`, so repeated access to the same shot repeats that work.  To obtain
+all of the data at once, convert to a dense array with `BitMatrix(samples)`,
+which returns a `num_bits × num_samples` matrix whose `k`-th column is shot
+`k`.  Per-shot or per-bit analysis over the whole data set should generally go
+through that matrix rather than indexing `samples` directly.
 """
 mutable struct Samples <: AbstractVector{BitVector}
     ptr::Ptr{QkrtSamples}
@@ -261,19 +263,16 @@ num_bits(samples::Samples) = samples.num_bits
 
 # Parse a hex sample string (e.g. "0x6") into a `BitVector` of length `nbits`,
 # where element `j` holds classical bit `j - 1` (index 1 is the least
-# significant bit).  Parsing goes through `BigInt` so that circuits with more
-# than 64 classical bits are handled correctly.
+# significant bit).  Widths above 64 bits go through `BigInt`, so circuits with
+# more than 64 classical bits are handled correctly.
 function _hex_to_bitvector(str::AbstractString, nbits::Integer)
-    value = parse(BigInt, str)
-    bv = BitVector(undef, nbits)
-    @inbounds for j in 1:nbits
-        bv[j] = isodd(value >> (j - 1))
-    end
-    bv
+    T = nbits <= 64 ? UInt64 : BigInt
+    BitVector(digits(Bool, parse(T, str), base = 2, pad = nbits))
 end
 
 Base.IndexStyle(::Type{Samples}) = IndexLinear()
-Base.size(samples::Samples) = (Int(qkrt_samples_num_samples(samples.ptr)),)
+Base.size(samples::Samples) =
+    (Int(GC.@preserve samples qkrt_samples_num_samples(samples.ptr)),)
 
 function Base.getindex(samples::Samples, i::Integer)::BitVector
     @boundscheck checkbounds(samples, i)
