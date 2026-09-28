@@ -52,8 +52,31 @@ When run with the [appropriate credentials](https://github.com/Qiskit/qiskit-ibm
 ```
 backend.name = "ibm_fez"
 transpiled_circuit.num_instructions = 10
-samples = ["0x0", "0x0", "0x0", "0x3", "0x0", "0x3", "0x0", "0x3", "0x0", "0x0", "0x3", "0x0", "0x0", "0x3", "0x3", "0x3", "0x0", "0x0", "0x3", "0x0", "0x0", "0x3", "0x0", "0x0", "0x3", "0x3", "0x3", ...]
+samples = 1024-element QiskitIBMRuntime.Samples:
+ "0x0"
+ "0x0"
+ "0x3"
+ "0x2"
+ "0x0"
+ "0x0"
+ "0x2"
+ "0x1"
+ "0x0"
+ "0x1"
+ ⋮
+ "0x0"
+ "0x0"
+ "0x1"
+ "0x1"
+ "0x2"
+ "0x2"
+ "0x2"
+ "0x2"
+ "0x0"
 ```
+
+`Samples` is an `AbstractVector{String}`, so it is displayed like any other
+Julia vector: the first and last few shots, with an ellipsis in between.
 
 ## Installation instructions
 
@@ -95,6 +118,19 @@ Type `] test QiskitIBMRuntime` in the Julia REPL, or run the following command:
 ```sh
 julia -e 'using Pkg; Pkg.test("QiskitIBMRuntime")'
 ```
+
+By default, the tests that require access to quantum hardware are skipped.
+To run them, set the environment variable `TEST_QKRT_SERVICE` to a nonzero
+value and create a credentials file at `~/.qiskit/qiskit-ibm.json`, in the
+format used by [Qiskit IBM Runtime](https://github.com/Qiskit/qiskit-ibm-runtime?tab=readme-ov-file#qiskit-runtime-service-on-the-new-ibm-quantum-platform-ibm-cloud):
+
+```sh
+TEST_QKRT_SERVICE=1 julia -e 'using Pkg; Pkg.test("QiskitIBMRuntime")'
+```
+
+Each service test run [submits a real sampler job](https://github.com/Qiskit/qiskit-ibm-runtime)
+against a least-busy backend, so only enable them when you have a working
+IBM Quantum Platform / IBM Cloud account.
 
 ## Documentation
 

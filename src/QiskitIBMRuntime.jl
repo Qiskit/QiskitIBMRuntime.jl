@@ -24,7 +24,12 @@ using Qiskit
 using Qiskit.C
 
 using .LibQiskitIBMRuntime
-import .LibQiskitIBMRuntime: Service as QkrtService, Job as QkrtJob, Backend as QkrtBackend, BackendSearchResults as QkrtBackendSearchResults, Samples as QkrtSamples
+import .LibQiskitIBMRuntime:
+    Service as QkrtService,
+    Job as QkrtJob,
+    Backend as QkrtBackend,
+    BackendSearchResults as QkrtBackendSearchResults,
+    Samples as QkrtSamples
 
 using CEnum: CEnum, @cenum
 import Dates
@@ -63,8 +68,20 @@ mutable struct Service
     end
 end
 
-LibQiskitIBMRuntime.qkrt_service_free(service::Service) =
-    qkrt_service_free(service.ptr)
+LibQiskitIBMRuntime.qkrt_service_free(service::Service) = qkrt_service_free(service.ptr)
+
+function Base.show(io::IO, service::Service)
+    if service.ptr == C_NULL
+        # Note: this should be unreachable, Service is instantiated with no parameters and validated
+        print(io, "Service(NULL)")
+    else
+        print(io, "Service(...)")
+    end
+end
+
+function Base.show(io::IO, ::MIME"text/plain", service::Service)
+    show(io, service)
+end
 
 """
     Backend
@@ -95,6 +112,28 @@ end
 LibQiskitIBMRuntime.qkrt_backend_search_results_free(sresults::BackendSearchResults) =
     qkrt_backend_search_results_free(sresults.ptr)
 
+function Base.show(io::IO, sresults::BackendSearchResults)
+    if sresults.ptr == C_NULL
+        print(io, "BackendSearchResults(NULL)")
+    else
+        invoke(show, Tuple{IO,AbstractArray}, io, sresults)
+    end
+end
+
+function Base.show(io::IO, ::MIME"text/plain", sresults::BackendSearchResults)
+    if sresults.ptr == C_NULL
+        print(io, "BackendSearchResults(NULL)")
+    else
+        invoke(
+            show,
+            Tuple{IO,MIME"text/plain",AbstractArray},
+            io,
+            MIME"text/plain"(),
+            sresults,
+        )
+    end
+end
+
 """
     backend_search(service)
 
@@ -103,7 +142,9 @@ form of a `BackendSearchResults` object.
 """
 function backend_search(service::Service)
     sresults = Ref{Ptr{QkrtBackendSearchResults}}(C_NULL)
-    GC.@preserve service check_exit_code(LibQiskitIBMRuntime.qkrt_backend_search(sresults, service.ptr))
+    GC.@preserve service check_exit_code(
+        LibQiskitIBMRuntime.qkrt_backend_search(sresults, service.ptr),
+    )
     BackendSearchResults(sresults[])
 end
 
@@ -172,8 +213,24 @@ function Base.getproperty(backend::Backend, sym::Symbol)
     end
 end
 
+function Base.show(io::IO, backend::Backend)
+    if backend.ptr == C_NULL
+        print(io, "Backend(NULL)")
+    else
+        print(io, "Backend(")
+        show(io, backend.name)
+        print(io, ")")
+    end
+end
+
 function Base.show(io::IO, ::MIME"text/plain", backend::Backend)
-    print(io, "Backend(<", backend.name, ">)")
+    if backend.ptr == C_NULL
+        print(io, "Backend(NULL)")
+    else
+        show(io, backend)
+        print(io, "\n  instance_name: $(backend.instance_name)")
+        print(io, "\n  instance_crn: $(backend.instance_crn)")
+    end
 end
 
 """
@@ -207,8 +264,19 @@ mutable struct Job
     end
 end
 
-LibQiskitIBMRuntime.qkrt_job_free(job::Job) =
-    qkrt_job_free(job.ptr)
+LibQiskitIBMRuntime.qkrt_job_free(job::Job) = qkrt_job_free(job.ptr)
+
+function Base.show(io::IO, job::Job)
+    if job.ptr == C_NULL
+        print(io, "Job(NULL)")
+    else
+        print(io, "Job(...)")
+    end
+end
+
+function Base.show(io::IO, ::MIME"text/plain", job::Job)
+    show(io, job)
+end
 
 """
     run_sampler_job(service, backend, circuit, shots::Integer)
@@ -217,9 +285,16 @@ Submit a job to the sampler primitive.
 
 The provided `circuit` must have "measure" instructions in order for its result to be useful.
 """
-function run_sampler_job(service::Service, backend::Backend, circuit::QuantumCircuit, shots::Integer)
+function run_sampler_job(
+    service::Service,
+    backend::Backend,
+    circuit::QuantumCircuit,
+    shots::Integer,
+)
     job_ptr = Ref{Ptr{QkrtJob}}(C_NULL)
-    check_exit_code(qkrt_sampler_job_run(job_ptr, service.ptr, backend.ptr, circuit.ptr, shots, C_NULL))
+    check_exit_code(
+        qkrt_sampler_job_run(job_ptr, service.ptr, backend.ptr, circuit.ptr, shots, C_NULL),
+    )
     return Job(job_ptr[])
 end
 
@@ -237,8 +312,29 @@ mutable struct Samples <: AbstractVector{String}
     end
 end
 
-LibQiskitIBMRuntime.qkrt_samples_free(samples::Samples) =
-    qkrt_samples_free(samples.ptr)
+LibQiskitIBMRuntime.qkrt_samples_free(samples::Samples) = qkrt_samples_free(samples.ptr)
+
+function Base.show(io::IO, samples::Samples)
+    if samples.ptr == C_NULL
+        print(io, "Samples(NULL)")
+    else
+        invoke(show, Tuple{IO,AbstractArray}, io, samples)
+    end
+end
+
+function Base.show(io::IO, ::MIME"text/plain", samples::Samples)
+    if samples.ptr == C_NULL
+        print(io, "Samples(NULL)")
+    else
+        invoke(
+            show,
+            Tuple{IO,MIME"text/plain",AbstractArray},
+            io,
+            MIME"text/plain"(),
+            samples,
+        )
+    end
+end
 
 Base.IndexStyle(::Type{Samples}) = IndexLinear()
 Base.size(samples::Samples) = (Int(qkrt_samples_num_samples(samples.ptr)),)
@@ -299,7 +395,11 @@ any type accepted by `sleep()`.  By default, it will poll every second while in
 the `Queued` or `Running` state.  To disable polling entirely and error if the
 job is not `Completed`, pass `poll_interval=nothing`.
 """
-function get_job_results(job::Job, service::Service; poll_interval::Union{Real,Dates.Period,Nothing}=Dates.Second(1))
+function get_job_results(
+    job::Job,
+    service::Service;
+    poll_interval::Union{Real,Dates.Period,Nothing} = Dates.Second(1),
+)
     # First make sure (or wait until) the job is actually complete
     status = get_job_status(job, service)
     if poll_interval !== nothing
@@ -319,7 +419,8 @@ end
 
 export Service, Backend, BackendSearchResults, JobStatus
 @compat public Job, Samples
-export least_busy, backend_search, run_sampler_job, get_job_status, get_job_results, target_from_backend
+export least_busy,
+    backend_search, run_sampler_job, get_job_status, get_job_results, target_from_backend
 
 # Export (or at least make public) enum instances
 for e in (JobStatus,)
