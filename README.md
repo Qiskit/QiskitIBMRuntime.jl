@@ -132,6 +132,16 @@ Each service test run [submits a real sampler job](https://github.com/Qiskit/qis
 against a least-busy backend, so only enable them when you have a working
 IBM Quantum Platform / IBM Cloud account.
 
+## Code formatting
+
+This repository is formatted using [JuliaFormatter.jl](https://github.com/domluna/JuliaFormatter.jl), and CI checks that the code is formatted.  To format the code in place:
+
+```sh
+make format
+```
+
+The `format/` environment pins the JuliaFormatter version so that local runs and CI agree.
+
 ## Documentation
 
 Documentation is available at https://qiskit.github.io/QiskitIBMRuntime.jl.

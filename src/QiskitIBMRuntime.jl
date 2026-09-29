@@ -69,7 +69,6 @@ mutable struct Service
 end
 
 LibQiskitIBMRuntime.qkrt_service_free(service::Service) = qkrt_service_free(service.ptr)
-
 function Base.show(io::IO, service::Service)
     if service.ptr == C_NULL
         # Note: this should be unreachable, Service is instantiated with no parameters and validated
@@ -191,7 +190,7 @@ function Base.iterate(sresults::BackendSearchResults, state)
     end
 end
 
-function Base.propertynames(backend::Backend; private::Bool = false)
+function Base.propertynames(backend::Backend; private::Bool=false)
     union(fieldnames(typeof(backend)), (:name, :instance_crn, :instance_name))
 end
 
@@ -265,7 +264,6 @@ mutable struct Job
 end
 
 LibQiskitIBMRuntime.qkrt_job_free(job::Job) = qkrt_job_free(job.ptr)
-
 function Base.show(io::IO, job::Job)
     if job.ptr == C_NULL
         print(io, "Job(NULL)")
@@ -313,7 +311,6 @@ mutable struct Samples <: AbstractVector{String}
 end
 
 LibQiskitIBMRuntime.qkrt_samples_free(samples::Samples) = qkrt_samples_free(samples.ptr)
-
 function Base.show(io::IO, samples::Samples)
     if samples.ptr == C_NULL
         print(io, "Samples(NULL)")
@@ -398,7 +395,7 @@ job is not `Completed`, pass `poll_interval=nothing`.
 function get_job_results(
     job::Job,
     service::Service;
-    poll_interval::Union{Real,Dates.Period,Nothing} = Dates.Second(1),
+    poll_interval::Union{Real,Dates.Period,Nothing}=Dates.Second(1),
 )
     # First make sure (or wait until) the job is actually complete
     status = get_job_status(job, service)

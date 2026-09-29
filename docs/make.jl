@@ -1,7 +1,12 @@
 using QiskitIBMRuntime
 using Documenter
 
-DocMeta.setdocmeta!(QiskitIBMRuntime, :DocTestSetup, :(using QiskitIBMRuntime); recursive=true)
+DocMeta.setdocmeta!(
+    QiskitIBMRuntime,
+    :DocTestSetup,
+    :(using QiskitIBMRuntime);
+    recursive=true,
+)
 
 makedocs(;
     modules=[QiskitIBMRuntime],
@@ -12,12 +17,7 @@ makedocs(;
         edit_link="main",
         assets=String[],
     ),
-    pages=[
-        "Home" => "index.md",
-    ],
+    pages=["Home" => "index.md"],
 )
 
-deploydocs(;
-    repo="github.com/Qiskit/QiskitIBMRuntime.jl",
-    devbranch="main",
-)
+deploydocs(; repo="github.com/Qiskit/QiskitIBMRuntime.jl", devbranch="main")
