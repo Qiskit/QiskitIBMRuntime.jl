@@ -69,6 +69,18 @@ mutable struct Service
 end
 
 LibQiskitIBMRuntime.qkrt_service_free(service::Service) = qkrt_service_free(service.ptr)
+function Base.show(io::IO, service::Service)
+    if service.ptr == C_NULL
+        # Note: this should be unreachable, Service is instantiated with no parameters and validated
+        print(io, "Service(NULL)")
+    else
+        print(io, "Service(...)")
+    end
+end
+
+function Base.show(io::IO, ::MIME"text/plain", service::Service)
+    show(io, service)
+end
 
 """
     Backend
@@ -98,6 +110,28 @@ end
 
 LibQiskitIBMRuntime.qkrt_backend_search_results_free(sresults::BackendSearchResults) =
     qkrt_backend_search_results_free(sresults.ptr)
+
+function Base.show(io::IO, sresults::BackendSearchResults)
+    if sresults.ptr == C_NULL
+        print(io, "BackendSearchResults(NULL)")
+    else
+        invoke(show, Tuple{IO,AbstractArray}, io, sresults)
+    end
+end
+
+function Base.show(io::IO, ::MIME"text/plain", sresults::BackendSearchResults)
+    if sresults.ptr == C_NULL
+        print(io, "BackendSearchResults(NULL)")
+    else
+        invoke(
+            show,
+            Tuple{IO,MIME"text/plain",AbstractArray},
+            io,
+            MIME"text/plain"(),
+            sresults,
+        )
+    end
+end
 
 """
     backend_search(service)
@@ -178,8 +212,24 @@ function Base.getproperty(backend::Backend, sym::Symbol)
     end
 end
 
+function Base.show(io::IO, backend::Backend)
+    if backend.ptr == C_NULL
+        print(io, "Backend(NULL)")
+    else
+        print(io, "Backend(")
+        show(io, backend.name)
+        print(io, ")")
+    end
+end
+
 function Base.show(io::IO, ::MIME"text/plain", backend::Backend)
-    print(io, "Backend(<", backend.name, ">)")
+    if backend.ptr == C_NULL
+        print(io, "Backend(NULL)")
+    else
+        show(io, backend)
+        print(io, "\n  instance_name: $(backend.instance_name)")
+        print(io, "\n  instance_crn: $(backend.instance_crn)")
+    end
 end
 
 """
@@ -214,6 +264,17 @@ mutable struct Job
 end
 
 LibQiskitIBMRuntime.qkrt_job_free(job::Job) = qkrt_job_free(job.ptr)
+function Base.show(io::IO, job::Job)
+    if job.ptr == C_NULL
+        print(io, "Job(NULL)")
+    else
+        print(io, "Job(...)")
+    end
+end
+
+function Base.show(io::IO, ::MIME"text/plain", job::Job)
+    show(io, job)
+end
 
 """
     run_sampler_job(service, backend, circuit, shots::Integer)
@@ -250,6 +311,27 @@ mutable struct Samples <: AbstractVector{String}
 end
 
 LibQiskitIBMRuntime.qkrt_samples_free(samples::Samples) = qkrt_samples_free(samples.ptr)
+function Base.show(io::IO, samples::Samples)
+    if samples.ptr == C_NULL
+        print(io, "Samples(NULL)")
+    else
+        invoke(show, Tuple{IO,AbstractArray}, io, samples)
+    end
+end
+
+function Base.show(io::IO, ::MIME"text/plain", samples::Samples)
+    if samples.ptr == C_NULL
+        print(io, "Samples(NULL)")
+    else
+        invoke(
+            show,
+            Tuple{IO,MIME"text/plain",AbstractArray},
+            io,
+            MIME"text/plain"(),
+            samples,
+        )
+    end
+end
 
 Base.IndexStyle(::Type{Samples}) = IndexLinear()
 Base.size(samples::Samples) = (Int(qkrt_samples_num_samples(samples.ptr)),)
