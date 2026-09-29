@@ -19,7 +19,8 @@ push!(args, "-I" * normpath(Qiskit_jll.artifact_dir, "include"))
 # enum being defined as two different things.
 push!(args, "-D__cplusplus")
 
-headers = [joinpath(qkrt_dir, header) for header in readdir(qkrt_dir) if endswith(header, ".h")]
+headers =
+    [joinpath(qkrt_dir, header) for header in readdir(qkrt_dir) if endswith(header, ".h")]
 # there is also an experimental `detect_headers` function for auto-detecting top-level headers in the directory
 # headers = detect_headers(qkrt_dir, args)
 
