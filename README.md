@@ -43,7 +43,7 @@ transpiled_circuit, layout = transpile(qc, target)
 
 shots = 1024
 job = run_sampler_job(service, backend, transpiled_circuit, shots)
-samples = get_job_results(job, service)
+samples = get_sampler_job_results(job, service)
 @show samples
 ```
 
@@ -95,6 +95,16 @@ Type `] test QiskitIBMRuntime` in the Julia REPL, or run the following command:
 ```sh
 julia -e 'using Pkg; Pkg.test("QiskitIBMRuntime")'
 ```
+
+## Code formatting
+
+This repository is formatted using [JuliaFormatter.jl](https://github.com/domluna/JuliaFormatter.jl), and CI checks that the code is formatted.  To format the code in place:
+
+```sh
+make format
+```
+
+The `format/` environment pins the JuliaFormatter version so that local runs and CI agree.
 
 ## Documentation
 

@@ -33,7 +33,7 @@ end
         @test count(parse_hex("0x8000000000000000", 64)) == 1
         @test parse_hex("0x8000000000000000", 64)[64]
         # Above 64 bits, parsing goes through BigInt.
-        wide = string("0x", string(big(1) << 100, base = 16))
+        wide = string("0x", string(big(1) << 100, base=16))
         bv = parse_hex(wide, 128)
         @test count(bv) == 1
         @test bv[101]
@@ -61,7 +61,7 @@ end
 
             shots = 1024
             job = run_sampler_job(service, backend, transpiled_circuit, shots)
-            samples = get_job_results(job, service)
+            samples = get_sampler_job_results(job, service)
             @show samples
             @test length(samples) == shots
             @test num_bits(samples) == 2
