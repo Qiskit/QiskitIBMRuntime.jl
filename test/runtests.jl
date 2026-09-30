@@ -17,6 +17,31 @@ end
         Aqua.test_all(QiskitIBMRuntime)
     end
 
+    @testset "Hex sample parsing" begin
+        # Element `j` of the resulting BitVector is classical bit `j - 1`, so
+        # index 1 is the least significant bit.
+        parse_hex = QiskitIBMRuntime._hex_to_bitvector
+        @test parse_hex("0x0", 2) == BitVector([0, 0])
+        @test parse_hex("0x3", 2) == BitVector([1, 1])
+        @test parse_hex("0x1", 4) == BitVector([1, 0, 0, 0])
+        @test parse_hex("0x6", 4) == BitVector([0, 1, 1, 0])
+        # A value narrower than the bit width is zero-padded.
+        @test parse_hex("0x2", 5) == BitVector([0, 1, 0, 0, 0])
+        # Widths of 64 bits and below take the UInt64 path; the boundary and
+        # the all-ones value are the interesting cases there.
+        @test parse_hex("0x" * "f"^16, 64) == trues(64)
+        @test count(parse_hex("0x8000000000000000", 64)) == 1
+        @test parse_hex("0x8000000000000000", 64)[64]
+        # Above 64 bits, parsing goes through BigInt.
+        wide = string("0x", string(big(1) << 100, base=16))
+        bv = parse_hex(wide, 128)
+        @test count(bv) == 1
+        @test bv[101]
+        @test parse_hex("0x" * "f"^16, 65) == vcat(trues(64), falses(1))
+        # The two paths agree where their ranges overlap.
+        @test parse_hex("0x6", 64) == parse_hex("0x6", 65)[1:64]
+    end
+
     # Skip the tests that require a service by default
     if get(ENV, "TEST_QKRT_SERVICE", "0") == "0"
         @info "Skipping the service tests.  To run them, set the environment variable TEST_QKRT_SERVICE=1"
@@ -38,6 +63,12 @@ end
             job = run_sampler_job(service, backend, transpiled_circuit, shots)
             samples = get_sampler_job_results(job, service)
             @show samples
+            @test length(samples) == shots
+            @test num_bits(samples) == 2
+            @test all(shot -> length(shot) == 2, samples)
+            bits = BitMatrix(samples)
+            @test size(bits) == (2, shots)
+            @test bits[:, 1] == samples[1]
         end
     end
 end

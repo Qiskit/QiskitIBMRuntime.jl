@@ -108,6 +108,10 @@ function qkrt_expectation_values_num_evs(evs)
     ccall((:qkrt_expectation_values_num_evs, libqiskit_ibm_runtime), Csize_t, (Ptr{ExpectationValues},), evs)
 end
 
+function qkrt_samples_num_bits(samples)
+    ccall((:qkrt_samples_num_bits, libqiskit_ibm_runtime), UInt32, (Ptr{Samples},), samples)
+end
+
 function qkrt_samples_get_sample(samples, index)
     ccall((:qkrt_samples_get_sample, libqiskit_ibm_runtime), Ptr{Cchar}, (Ptr{Samples}, Csize_t), samples, index)
 end
