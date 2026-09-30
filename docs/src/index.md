@@ -14,14 +14,16 @@ This example constructs a circuit that generates a [Bell state](https://en.wikip
 
 ```julia
 using Qiskit
+using Qiskit.Operations
 using QiskitIBMRuntime
+using StatsBase
 
 function generate_bell_circuit()
     qc = QuantumCircuit(2, 2) # 2 qubits, 2 clbits
-    qc.h(1)
-    qc.cx(1, 2)
-    qc.measure(1, 1)
-    qc.measure(2, 2)
+    h!(qc, 1)
+    cx!(qc, 1, 2)
+    measure!(qc, 1, 1)
+    measure!(qc, 2, 2)
     qc
 end
 
@@ -39,8 +41,12 @@ transpiled_circuit, layout = transpile(qc, target)
 shots = 1024
 job = run_sampler_job(service, backend, transpiled_circuit, shots)
 samples = get_sampler_job_results(job, service)
-@show num_bits(samples)
-@show samples[1]
+
+# Display the first 20 samples
+@show samples[1:20]
+
+# Show counts
+@show countmap(samples)
 ```
 
 `samples` is an `AbstractVector` of shots, where each shot is a `BitVector`
@@ -50,8 +56,8 @@ generate output similar to the following:
 ```
 backend.name = "ibm_fez"
 transpiled_circuit.num_instructions = 10
-num_bits(samples) = 2
-samples[1] = Bool[0, 0]
+samples[1:20] = BitVector[[1, 1], [0, 0], [1, 1], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [1, 1], [0, 0], [1, 1], [1, 1], [0, 0], [0, 0], [1, 1], [0, 0], [0, 0], [0, 1], [0, 0], [1, 1]]
+countmap(samples) = Dict{BitVector, Int64}([0, 1] => 14, [0, 0] => 518, [1, 1] => 446, [1, 0] => 46)
 ```
 
 To work with every shot at once, convert the samples to a dense
