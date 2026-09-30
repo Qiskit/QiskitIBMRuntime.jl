@@ -263,7 +263,7 @@ version = "17.8.2+0"
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Qiskit_jll"]
 path = "/home/garrison/.julia/dev/qiskit_ibm_runtime_jll/"
 uuid = "dfd00f80-54b8-5b12-a44d-54bafd549557"
-version = "0.38.2+0"
+version = "0.39.0+0"
 
 [registries.General]
 url = "https://github.com/JuliaRegistries/General.git"
