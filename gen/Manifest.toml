@@ -2,7 +2,7 @@
 
 julia_version = "1.13.0"
 manifest_format = "2.1"
-project_hash = "3b370a572495a9c095b9da1012e65e55aeae8cca"
+project_hash = "3ded3cd028a67ee6552dfb9cded14b65609ed261"
 
 [[deps.ArgTools]]
 uuid = "0dad84c5-d112-42e6-8d28-ef12dabb789f"
@@ -101,6 +101,13 @@ deps = ["Artifacts", "CompilerSupportLibraries_jll", "LibSSH2_jll", "Libdl", "Op
 uuid = "e37daf67-58a4-590a-8e99-b0245dd2ffc5"
 version = "1.9.1+0"
 
+[[deps.LibMPDec_jll]]
+deps = ["Artifacts", "JLLWrappers", "Libdl"]
+git-tree-sha1 = "ce78ec7bb8a7c6babc1e61f701fbdf36f5384a36"
+registries = "General"
+uuid = "7106de7a-f406-5ef1-84f7-3345f7341bd2"
+version = "2.5.2+0"
+
 [[deps.LibSSH2_jll]]
 deps = ["Artifacts", "CompilerSupportLibraries_jll", "Libdl", "OpenSSL_jll", "Zlib_jll"]
 uuid = "29816b5a-b9ab-546f-933c-edad1886dfa8"
@@ -168,11 +175,11 @@ uuid = "de0858da-6303-5e67-8744-51eddeeeb8d7"
 version = "1.11.0"
 
 [[deps.Python_jll]]
-deps = ["Artifacts", "Bzip2_jll", "Expat_jll", "JLLWrappers", "Libdl", "Libffi_jll", "OpenSSL_jll", "SQLite_jll", "XZ_jll", "Zlib_jll"]
-git-tree-sha1 = "d0d31728bd909beedf7fdae0609ac932c7324f7e"
+deps = ["Artifacts", "Bzip2_jll", "Expat_jll", "JLLWrappers", "LibMPDec_jll", "Libdl", "Libffi_jll", "OpenSSL_jll", "SQLite_jll", "XZ_jll", "Zlib_jll"]
+git-tree-sha1 = "76a68dfc4e6fcbcccf90e1961fa2705885699391"
 registries = "General"
 uuid = "93d3a430-8e7c-50da-8e8d-3dfcfb3baf05"
-version = "3.12.14+0"
+version = "3.11.12+0"
 
 [[deps.Qiskit_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Python_jll"]
@@ -261,7 +268,8 @@ version = "17.8.2+0"
 
 [[deps.qiskit_ibm_runtime_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Qiskit_jll"]
-path = "/home/garrison/.julia/dev/qiskit_ibm_runtime_jll/"
+git-tree-sha1 = "4e7169b902ca368453bb36b71584db244285517c"
+registries = "General"
 uuid = "dfd00f80-54b8-5b12-a44d-54bafd549557"
 version = "0.39.0+0"
 

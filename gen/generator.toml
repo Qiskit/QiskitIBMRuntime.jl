@@ -4,5 +4,7 @@ output_file_path = "./LibQiskitIBMRuntime.jl"
 module_name = "LibQiskitIBMRuntime"
 jll_pkg_name = "qiskit_ibm_runtime_jll"
 export_symbol_prefixes = ["qkrt_"]
-output_ignorelist = ["^qk__.*", "^QISKIT_.*", "^Qk.*"]
+# Ignore the `Qk`-prefixed symbols that come from Qiskit itself, since those are
+# provided by `Qiskit.C`.  The negative lookahead keeps our own `Qkrt` types.
+output_ignorelist = ["^qk__.*", "^QISKIT_.*", "^Qk(?!rt).*"]
 prologue_file_path = "./prologue.jl"

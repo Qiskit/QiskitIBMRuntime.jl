@@ -41,6 +41,23 @@ function check_exit_code(code::Integer)::Nothing
 end
 
 """
+    default_user_agent()
+
+The user agent sent with each request, which identifies this package (and its
+version) to the IBM Quantum Platform.
+"""
+default_user_agent() = "QiskitIBMRuntime.jl/$(pkgversion(@__MODULE__))"
+
+# Copy an immutable struct, replacing a single field.  `setfield!` works only on
+# mutable structs, and `Base.setindex` only on tuples and named tuples, so there
+# is nothing in `Base` that does this for a plain struct.  Deriving the fields
+# from the type keeps us from having to spell out the ones we are not changing.
+function set_field(x::T, name::Symbol, value) where {T}
+    @assert hasfield(T, name)
+    T((field === name ? value : getfield(x, field) for field in fieldnames(T))...)
+end
+
+"""
     Service
 
 This type represents an instance of the Qiskit IBM Runtime service.
@@ -50,18 +67,33 @@ mutable struct Service
     ptr::Ptr{QkrtService}
 
     @doc"""
-        Service()
+        Service(; user_agent=default_user_agent())
 
     This constructor reads credentials from the file `\$HOME/.qiskit/qiskit-ibm.json`.
+
+    The `user_agent` is sent with each request to the IBM Quantum Platform.  It
+    defaults to [`default_user_agent`](@ref), which identifies this package.  Code
+    that builds on this package can pass its own string to identify itself instead.
 
     In the future, this constructor may also support passing credentials via
     environment variables, but at the time of writing, this is not yet supported by
     qiskit-ibm-runtime-c.
     """
-    function Service()
+    function Service(; user_agent::AbstractString=default_user_agent())
         service = Ref{Ptr{QkrtService}}(C_NULL)
-        code = qkrt_service_new(service)
-        check_exit_code(code)
+        # The config borrows `user_agent` rather than copying it, so the string
+        # must be preserved until `qkrt_service_new_from_config` returns.
+        ua = Base.cconvert(Cstring, user_agent)
+        GC.@preserve ua begin
+            # Start from the library's defaults so that the fields we do not set
+            # keep their default behavior.
+            config = set_field(
+                qkrt_default_service_config(),
+                :user_agent,
+                Base.unsafe_convert(Ptr{Cchar}, ua),
+            )
+            check_exit_code(qkrt_service_new_from_config(Ref(config), service))
+        end
         retval = new(service[])
         finalizer(qkrt_service_free, retval)
         retval
@@ -366,7 +398,7 @@ end
 get_job_results(args...; kwargs...) = get_sampler_job_results(args...; kwargs...)
 
 export Service, Backend, BackendSearchResults, JobStatus
-@compat public Job, Samples, num_bits
+@compat public Job, Samples, num_bits, default_user_agent
 export least_busy,
     backend_search,
     run_sampler_job,

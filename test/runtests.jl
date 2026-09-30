@@ -17,6 +17,14 @@ end
         Aqua.test_all(QiskitIBMRuntime)
     end
 
+    @testset "Default user agent" begin
+        # The default user agent identifies this package, so that requests from
+        # Julia can be distinguished from other users of qiskit-ibm-runtime-c.
+        ua = QiskitIBMRuntime.default_user_agent()
+        @test ua == "QiskitIBMRuntime.jl/$(pkgversion(QiskitIBMRuntime))"
+        @test startswith(ua, "QiskitIBMRuntime.jl/")
+    end
+
     @testset "Hex sample parsing" begin
         # Element `j` of the resulting BitVector is classical bit `j - 1`, so
         # index 1 is the least significant bit.

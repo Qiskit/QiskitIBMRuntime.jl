@@ -32,6 +32,25 @@ function qkrt_service_new(out)
     ccall((:qkrt_service_new, libqiskit_ibm_runtime), Int32, (Ptr{Ptr{Service}},), out)
 end
 
+struct QkrtServiceConfig
+    token::Ptr{Cchar}
+    iam_url::Ptr{Cchar}
+    iqp_url::Ptr{Cchar}
+    global_search_url::Ptr{Cchar}
+    user_agent::Ptr{Cchar}
+    filename::Ptr{Cchar}
+    account_name::Ptr{Cchar}
+end
+
+# no prototype is found for this function at qiskit_ibm_runtime.h:88:26, please use with caution
+function qkrt_default_service_config()
+    ccall((:qkrt_default_service_config, libqiskit_ibm_runtime), QkrtServiceConfig, ())
+end
+
+function qkrt_service_new_from_config(config, out)
+    ccall((:qkrt_service_new_from_config, libqiskit_ibm_runtime), Int32, (Ptr{QkrtServiceConfig}, Ptr{Ptr{Service}}), config, out)
+end
+
 function qkrt_service_free(service)
     ccall((:qkrt_service_free, libqiskit_ibm_runtime), Cvoid, (Ptr{Service},), service)
 end
@@ -156,13 +175,18 @@ function qkrt_counts_get_by_sample(counts, sample)
     ccall((:qkrt_counts_get_by_sample, libqiskit_ibm_runtime), UInt64, (Ptr{Counts}, Ptr{Cchar}), counts, sample)
 end
 
-#function qkrt_count_clear(count)
-#    ccall((:qkrt_count_clear, libqiskit_ibm_runtime), Cvoid, (Ptr{QkrtCount},), count)
-#end
+struct QkrtCount
+    name::Ptr{Cchar}
+    count::UInt64
+end
 
-#function qkrt_counts_get_count(counts, index, out_count)
-#    ccall((:qkrt_counts_get_count, libqiskit_ibm_runtime), Int32, (Ptr{Counts}, Csize_t, Ptr{QkrtCount}), counts, index, out_count)
-#end
+function qkrt_count_clear(count)
+    ccall((:qkrt_count_clear, libqiskit_ibm_runtime), Cvoid, (Ptr{QkrtCount},), count)
+end
+
+function qkrt_counts_get_count(counts, index, out_count)
+    ccall((:qkrt_counts_get_count, libqiskit_ibm_runtime), Int32, (Ptr{Counts}, Csize_t, Ptr{QkrtCount}), counts, index, out_count)
+end
 
 function qkrt_counts_free(counts)
     ccall((:qkrt_counts_free, libqiskit_ibm_runtime), Cvoid, (Ptr{Counts},), counts)
