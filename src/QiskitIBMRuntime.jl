@@ -310,7 +310,11 @@ any type accepted by `sleep()`.  By default, it will poll every second while in
 the `Queued` or `Running` state.  To disable polling entirely and error if the
 job is not `Completed`, pass `poll_interval=nothing`.
 """
-function get_sampler_job_results(job::Job, service::Service; poll_interval::Union{Real,Dates.Period,Nothing}=Dates.Second(1))
+function get_sampler_job_results(
+    job::Job,
+    service::Service;
+    poll_interval::Union{Real,Dates.Period,Nothing}=Dates.Second(1),
+)
     # First make sure (or wait until) the job is actually complete
     status = get_job_status(job, service)
     if poll_interval !== nothing
@@ -339,7 +343,13 @@ get_job_results(args...; kwargs...) = get_sampler_job_results(args...; kwargs...
 
 export Service, Backend, BackendSearchResults, JobStatus
 @compat public Job, Samples
-export least_busy, backend_search, run_sampler_job, get_job_status, get_sampler_job_results, get_job_results, target_from_backend
+export least_busy,
+    backend_search,
+    run_sampler_job,
+    get_job_status,
+    get_sampler_job_results,
+    get_job_results,
+    target_from_backend
 
 # Export (or at least make public) enum instances
 for e in (JobStatus,)
