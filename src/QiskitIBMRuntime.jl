@@ -339,7 +339,7 @@ get_job_results(args...; kwargs...) = get_sampler_job_results(args...; kwargs...
 
 export Service, Backend, BackendSearchResults, JobStatus
 @compat public Job, Samples
-export least_busy, backend_search, run_sampler_job, get_job_status, get_sampler_job_results, get_job_results target_from_backend
+export least_busy, backend_search, run_sampler_job, get_job_status, get_sampler_job_results, get_job_results, target_from_backend
 
 # Export (or at least make public) enum instances
 for e in (JobStatus,)
