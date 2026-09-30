@@ -36,7 +36,7 @@ end
 
             shots = 1024
             job = run_sampler_job(service, backend, transpiled_circuit, shots)
-            samples = get_job_results(job, service)
+            samples = get_sampler_job_results(job, service)
             @show samples
         end
     end

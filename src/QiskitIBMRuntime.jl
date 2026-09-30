@@ -303,14 +303,14 @@ function get_job_status(job::Job, service::Service)::JobStatus
 end
 
 """
-    get_job_results(job, service; poll_interval=1)
+    get_sampler_job_results(job, service; poll_interval=1)
 
 Return job results as a `Samples` object.  The `poll_interval` argument can be
 any type accepted by `sleep()`.  By default, it will poll every second while in
 the `Queued` or `Running` state.  To disable polling entirely and error if the
 job is not `Completed`, pass `poll_interval=nothing`.
 """
-function get_job_results(
+function get_sampler_job_results(
     job::Job,
     service::Service;
     poll_interval::Union{Real,Dates.Period,Nothing}=Dates.Second(1),
@@ -328,14 +328,28 @@ function get_job_results(
     end
     # Now obtain the results
     samples = Ref{Ptr{QkrtSamples}}(0)
-    check_exit_code(qkrt_job_results(samples, service.ptr, job.ptr))
+    check_exit_code(qkrt_sampler_job_results(samples, service.ptr, job.ptr))
     Samples(samples[])
 end
+
+# Previously the above function was called get_job_results, but it was renamed
+# because there is currently no way to query a Job to find out what type of job
+# it is.  Eventually there is expected to be a way to query job type; see
+# https://github.com/Qiskit/qiskit-ibm-runtime-c/issues/33.
+#
+# This is _not_ marked as deprecated, because this (or something like it) will
+# be the preferred interface once job type querying exists.
+get_job_results(args...; kwargs...) = get_sampler_job_results(args...; kwargs...)
 
 export Service, Backend, BackendSearchResults, JobStatus
 @compat public Job, Samples
 export least_busy,
-    backend_search, run_sampler_job, get_job_status, get_job_results, target_from_backend
+    backend_search,
+    run_sampler_job,
+    get_job_status,
+    get_sampler_job_results,
+    get_job_results,
+    target_from_backend
 
 # Export (or at least make public) enum instances
 for e in (JobStatus,)
