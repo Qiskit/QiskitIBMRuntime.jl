@@ -104,6 +104,19 @@ Type `] test QiskitIBMRuntime` in the Julia REPL, or run the following command:
 julia -e 'using Pkg; Pkg.test("QiskitIBMRuntime")'
 ```
 
+By default, the tests that require access to quantum hardware are skipped.
+To run them, set the environment variable `TEST_QKRT_SERVICE` to a nonzero
+value and create a credentials file at `~/.qiskit/qiskit-ibm.json`, in the
+format used by [Qiskit IBM Runtime](https://github.com/Qiskit/qiskit-ibm-runtime?tab=readme-ov-file#qiskit-runtime-service-on-the-new-ibm-quantum-platform-ibm-cloud):
+
+```sh
+TEST_QKRT_SERVICE=1 julia -e 'using Pkg; Pkg.test("QiskitIBMRuntime")'
+```
+
+Each service test run [submits a real sampler job](https://github.com/Qiskit/qiskit-ibm-runtime)
+against a least-busy backend, so only enable them when you have a working
+IBM Quantum Platform / IBM Cloud account.
+
 ## Code formatting
 
 This repository is formatted using [JuliaFormatter.jl](https://github.com/domluna/JuliaFormatter.jl), and CI checks that the code is formatted.  To format the code in place:
