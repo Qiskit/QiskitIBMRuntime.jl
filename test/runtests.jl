@@ -72,7 +72,7 @@ end
             samples = get_sampler_job_results(job, service)
             @show samples
             @test length(samples) == shots
-            @test num_bits(samples) == 2
+            @test QiskitIBMRuntime.num_bits(samples) == 2
             @test all(shot -> length(shot) == 2, samples)
             bits = BitMatrix(samples)
             @test size(bits) == (2, shots)
