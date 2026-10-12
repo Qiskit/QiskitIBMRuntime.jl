@@ -230,12 +230,12 @@ end
 Construct a `Qiskit.Target` which is appropriate for the provided `Backend`.
 """
 function target_from_backend(backend::Backend, service::Service)::Qiskit.Target
-    @assert service.ptr !== C_NULL
-    @assert backend.ptr !== C_NULL
+    @assert service.ptr != C_NULL
+    @assert backend.ptr != C_NULL
     GC.@preserve service backend begin
         target = qkrt_get_backend_target(service.ptr, backend.ptr)
     end
-    if target === C_NULL
+    if target == C_NULL
         throw(ErrorException("Null pointer obtained instead of target"))
     end
     Qiskit.Target(target)
