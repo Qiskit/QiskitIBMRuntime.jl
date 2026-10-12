@@ -77,12 +77,39 @@ end
             job = run_sampler_job(service, backend, transpiled_circuit, shots)
             samples = get_sampler_job_results(job, service)
             @show samples
+
             @test length(samples) == shots
             @test QiskitIBMRuntime.num_bits(samples) == 2
             @test all(shot -> length(shot) == 2, samples)
             bits = BitMatrix(samples)
             @test size(bits) == (2, shots)
             @test bits[:, 1] == samples[1]
+
+            @testset "Base.show for Service" begin
+                io = IOBuffer()
+                show(io, service)
+                @test String(take!(io)) == "Service(...)"
+            end
+
+            @testset "Base.show for Backend" begin
+                io = IOBuffer()
+                show(io, backend)
+                @test String(take!(io)) == "Backend(<$(backend.name)>)"
+
+                io = IOBuffer()
+                show(io, MIME"text/plain"(), backend)
+                @test String(take!(io)) == "Backend(<$(backend.name)>)"
+            end
+
+            @testset "Backend properties" begin
+                @test :name in propertynames(backend)
+            end
+
+            @testset "Base.show for Job" begin
+                io = IOBuffer()
+                show(io, job)
+                @test String(take!(io)) == "Job(...)"
+            end
         end
     end
 end

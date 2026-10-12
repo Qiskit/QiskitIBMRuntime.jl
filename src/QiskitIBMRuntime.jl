@@ -112,6 +112,8 @@ end
 
 LibQiskitIBMRuntime.qkrt_service_free(service::Service) = qkrt_service_free(service.ptr)
 
+Base.show(io::IO, ::Service) = print(io, "Service(...)")
+
 """
     Backend
 
@@ -122,6 +124,11 @@ mutable struct Backend
     # We hold a reference to the search results so they don't get freed while
     # this exists
     search_results::Any # Any because we can't reference BackendSearchResults yet on this line
+
+    function Backend(ptr::Ptr{QkrtBackend}, search_results)
+        @assert ptr != C_NULL
+        new(ptr, search_results)
+    end
 end
 
 """
@@ -132,6 +139,7 @@ This type contains the results of a backend search.
 mutable struct BackendSearchResults <: AbstractVector{Backend}
     ptr::Ptr{QkrtBackendSearchResults}
     function BackendSearchResults(ptr::Ptr{QkrtBackendSearchResults})
+        @assert ptr != C_NULL
         retval = new(ptr)
         finalizer(qkrt_backend_search_results_free, retval)
         retval
@@ -220,9 +228,7 @@ function Base.getproperty(backend::Backend, sym::Symbol)
     end
 end
 
-function Base.show(io::IO, ::MIME"text/plain", backend::Backend)
-    print(io, "Backend(<", backend.name, ">)")
-end
+Base.show(io::IO, backend::Backend) = print(io, "Backend(<", backend.name, ">)")
 
 """
     target_from_backend(backend, service)
@@ -249,6 +255,7 @@ Qiskit IBM Runtime job.
 mutable struct Job
     ptr::Ptr{QkrtJob}
     function Job(ptr::Ptr{QkrtJob})
+        @assert ptr != C_NULL
         retval = new(ptr)
         finalizer(qkrt_job_free, retval)
         retval
@@ -256,6 +263,10 @@ mutable struct Job
 end
 
 LibQiskitIBMRuntime.qkrt_job_free(job::Job) = qkrt_job_free(job.ptr)
+
+# The job ID is not exposed through the C API yet, so there is nothing more
+# informative to display (see Qiskit/qiskit-ibm-runtime-c#34).
+Base.show(io::IO, ::Job) = print(io, "Job(...)")
 
 """
     run_sampler_job(service, backend, circuit, shots::Integer)
@@ -299,6 +310,7 @@ mutable struct Samples <: AbstractVector{BitVector}
     ptr::Ptr{QkrtSamples}
     num_bits::Int
     function Samples(ptr::Ptr{QkrtSamples})
+        @assert ptr != C_NULL
         retval = new(ptr, Int(qkrt_samples_num_bits(ptr)))
         finalizer(qkrt_samples_free, retval)
         retval
