@@ -2,6 +2,7 @@ using QiskitIBMRuntime
 using Qiskit
 using Test
 using Aqua
+using qiskit_ibm_runtime_jll
 
 function generate_bell_circuit()
     qc = QuantumCircuit(2, 2) # 2 qubits, 2 clbits
@@ -19,10 +20,15 @@ end
 
     @testset "Default user agent" begin
         # The default user agent identifies this package, so that requests from
-        # Julia can be distinguished from other users of qiskit-ibm-runtime-c.
+        # Julia can be distinguished from other users of qiskit-ibm-runtime-c,
+        # and reports which version of that library is in use.
         ua = QiskitIBMRuntime.default_user_agent()
-        @test ua == "QiskitIBMRuntime.jl/$(pkgversion(QiskitIBMRuntime))"
+        jll_version = pkgversion(qiskit_ibm_runtime_jll)
+        @test ua ==
+              "QiskitIBMRuntime.jl/$(pkgversion(QiskitIBMRuntime)) (qkrtc $(jll_version.major).$(jll_version.minor).$(jll_version.patch))"
         @test startswith(ua, "QiskitIBMRuntime.jl/")
+        # The build number of the JLL is packaging metadata, so it is omitted.
+        @test !occursin("+", ua)
     end
 
     @testset "Hex sample parsing" begin

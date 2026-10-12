@@ -40,13 +40,23 @@ function check_exit_code(code::Integer)::Nothing
     end
 end
 
+# The version of the `qiskit_ibm_runtime_jll` package, which is the version of
+# qiskit-ibm-runtime-c that we are calling into.  JLL versions carry a build
+# number (e.g. `0.39.0+0`) that reflects only the packaging of a given upstream
+# release, so we report just the upstream version.
+function qkrtc_version()
+    v = pkgversion(qiskit_ibm_runtime_jll)
+    VersionNumber(v.major, v.minor, v.patch)
+end
+
 """
     default_user_agent()
 
 The user agent sent with each request, which identifies this package (and its
-version) to the IBM Quantum Platform.
+version) to the IBM Quantum Platform.  It also reports the version of
+qiskit-ibm-runtime-c in use, in parentheses.
 """
-default_user_agent() = "QiskitIBMRuntime.jl/$(pkgversion(@__MODULE__))"
+default_user_agent() = "QiskitIBMRuntime.jl/$(pkgversion(@__MODULE__)) (qkrtc $(qkrtc_version()))"
 
 # Copy an immutable struct, replacing a single field.  `setfield!` works only on
 # mutable structs, and `Base.setindex` only on tuples and named tuples, so there
