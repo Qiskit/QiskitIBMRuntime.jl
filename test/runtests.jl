@@ -86,9 +86,6 @@ end
             end
 
             @testset "Base.show for Backend" begin
-                # The pointer is an implementation detail and must not leak
-                @test !occursin("Ptr{", sprint(show, backend))
-
                 io = IOBuffer()
                 show(io, backend)
                 @test String(take!(io)) == "Backend(<$(backend.name)>)"

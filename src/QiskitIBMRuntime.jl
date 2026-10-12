@@ -116,7 +116,7 @@ mutable struct Backend
     search_results::Any # Any because we can't reference BackendSearchResults yet on this line
 
     function Backend(ptr::Ptr{QkrtBackend}, search_results)
-        @assert ptr !== C_NULL
+        @assert ptr != C_NULL
         new(ptr, search_results)
     end
 end
@@ -129,7 +129,7 @@ This type contains the results of a backend search.
 mutable struct BackendSearchResults <: AbstractVector{Backend}
     ptr::Ptr{QkrtBackendSearchResults}
     function BackendSearchResults(ptr::Ptr{QkrtBackendSearchResults})
-        @assert ptr !== C_NULL
+        @assert ptr != C_NULL
         retval = new(ptr)
         finalizer(qkrt_backend_search_results_free, retval)
         retval
@@ -220,10 +220,6 @@ end
 
 Base.show(io::IO, backend::Backend) = print(io, "Backend(<", backend.name, ">)")
 
-function Base.show(io::IO, ::MIME"text/plain", backend::Backend)
-    print(io, "Backend(<", backend.name, ">)")
-end
-
 """
     target_from_backend(backend, service)
 
@@ -249,7 +245,7 @@ Qiskit IBM Runtime job.
 mutable struct Job
     ptr::Ptr{QkrtJob}
     function Job(ptr::Ptr{QkrtJob})
-        @assert ptr !== C_NULL
+        @assert ptr != C_NULL
         retval = new(ptr)
         finalizer(qkrt_job_free, retval)
         retval
@@ -304,7 +300,7 @@ mutable struct Samples <: AbstractVector{BitVector}
     ptr::Ptr{QkrtSamples}
     num_bits::Int
     function Samples(ptr::Ptr{QkrtSamples})
-        @assert ptr !== C_NULL
+        @assert ptr != C_NULL
         retval = new(ptr, Int(qkrt_samples_num_bits(ptr)))
         finalizer(qkrt_samples_free, retval)
         retval
