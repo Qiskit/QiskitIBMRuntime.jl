@@ -54,7 +54,7 @@ samples = get_sampler_job_results(job, service)
 @show countmap(samples)
 ```
 
-When run with the [appropriate credentials](https://github.com/Qiskit/qiskit-ibm-runtime?tab=readme-ov-file#qiskit-runtime-service-on-the-new-ibm-quantum-platform-ibm-cloud) to access quantum hardware, the above code may generate output similar to the following:
+When run with the [appropriate credentials](https://github.com/Qiskit/qiskit-ibm-runtime#account-setup) to access quantum hardware, the above code may generate output similar to the following:
 
 ```
 backend.name = "ibm_fez"
