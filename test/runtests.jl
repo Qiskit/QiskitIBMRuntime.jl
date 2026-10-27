@@ -15,7 +15,10 @@ end
 
 @testset "QiskitIBMRuntime.jl" begin
     @testset "Code quality (Aqua.jl)" begin
-        Aqua.test_all(QiskitIBMRuntime)
+        # The downgrade CI job promotes Aqua from [extras] into [deps] so it can
+        # lock its minimum version, which Aqua would then flag as stale.
+        stale_ignore = get(ENV, "QISKIT_DOWNGRADE_CI", "") == "true" ? [:Aqua] : Symbol[]
+        Aqua.test_all(QiskitIBMRuntime; stale_deps=(; ignore=stale_ignore))
     end
 
     @testset "Default user agent" begin
